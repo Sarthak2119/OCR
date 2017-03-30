@@ -60,6 +60,6 @@ def cut_image(img): #expects a binarized image
     # print(vsum)
 
     # print(minx, maxx, miny, maxy)
-    img = img[minx-2:maxx+4, miny-2:maxy+4]
+    img = img[minx:maxx+1, miny:maxy+1]
     img = abs(255 - img)
     return img
