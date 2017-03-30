@@ -40,6 +40,7 @@ import cv2
 
 def pre_init(img):
     img = pre.cut_image(img)
+
     img = pre.thin_image(img)
     return img
 
@@ -191,9 +192,12 @@ def cnt_vlines(img):
 def get_data(img):
 
     img = pre_init(img)
+    features = []
+    x,y=img.shape
+    features+=x/y
     img = util.cnvt_bool_to_uint8(img)
     img = cv2.resize(img, (50, 50), interpolation=cv2.INTER_CUBIC)
-    features = []
+    
     curr = histo(img)
     features += curr
 
