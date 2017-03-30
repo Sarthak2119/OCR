@@ -2,6 +2,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report,confusion_matrix
 import numpy as np
+import pickle
 
 def read_data(data):
     ans=[]
@@ -43,11 +44,16 @@ def run():
     scaler = StandardScaler()
     scaler.fit(x_train)
     x_train = scaler.transform(x_train)
+
     x_test = scaler.transform(x_test)
+    with open('scaler.pkl','wb') as f:
+        pickle.dump(scaler,f)
 
     #training
     clf = MLPClassifier(hidden_layer_sizes=(50, 50))
     clf.fit(x_train, y_train)
+    with open('MPLClassifier.pkl','wb') as f:
+        pickle.dump(clf,f)
 
     #testing
     predictions = clf.predict(x_test)

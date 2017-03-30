@@ -2,7 +2,7 @@ import dataset_preprocess
 import  out_vecorize
 import training_and_testing
 import datetime
-
+import template
 dataset_preprocess.run()
 print ("Preprocess compplete")
 print (datetime.datetime.now())
