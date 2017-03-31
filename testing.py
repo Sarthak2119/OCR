@@ -17,5 +17,5 @@ util.display_image(cutt)
 img = pre.thin_image(img)
 cutt = pre.thin_image(cutt)
 
-print(img.shape)
+print(img.shape, end='')
 print(cutt.shape)

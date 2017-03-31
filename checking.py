@@ -10,7 +10,7 @@ import numpy as np
 import pickle
 
 
-img = cv2.imread('text.jpg',0)
+img = cv2.imread('/home/sarthak/ip/fIMage.jpg', 0)
 #img = cv2.resize(img, (50, 50), interpolation=cv2.INTER_CUBIC)
 
 with open('MPLClassifier.pkl','rb')as f:

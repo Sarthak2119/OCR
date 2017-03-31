@@ -11,15 +11,15 @@ def run():
     x = 0
     y = 0
     cwd = os.getcwd()
-    train_in = 'train_input.txt'
-    test_in = 'test_input.txt'
-    train_out = 'train_out.txt'
-    test_out = 'test_out.txt'
+    train_in = 'train_input3.txt'
+    test_in = 'test_input3.txt'
+    train_out = 'train_out3.txt'
+    test_out = 'test_out3.txt'
     train_in = open(train_in, 'w')
     train_out = open(train_out, 'w')
     test_in = open(test_in, 'w')
     test_out = open(test_out, 'w')
-    path = cwd+'/Fnt/'
+    path = cwd+'/Fnt3/'
     for files in os.listdir(path):
         character_value = int((files[6:len(files)]))
         # print (files)
@@ -41,7 +41,7 @@ def run():
         y = (len(path2))
         #print (path2)
         cnt = 0
-        boudary = (y * 75) / 100
+        boudary = (y * 90) / 100
         for imges in path2:
 
             val = path+files+'/' + imges

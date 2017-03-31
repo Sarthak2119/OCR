@@ -3,6 +3,7 @@ import utility as util
 import segmentation as seg
 import histogram as hist
 from matplotlib import pyplot as plt
+import cv2
 
 def run(img):
     #input image in grayscale
@@ -51,4 +52,7 @@ def run(img):
     # for clist in chars:
     #     for ch in clist:
     #         util.display_image(ch)
-    return chars
+    # return chars
+
+# img = cv2.imread('/home/sarthak/ip/hello.jpg', 0)
+# run(img)
