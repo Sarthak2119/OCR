@@ -52,7 +52,7 @@ def run(img):
     # for clist in chars:
     #     for ch in clist:
     #         util.display_image(ch)
-    # return chars
+    return chars
 
 # img = cv2.imread('/home/sarthak/ip/hello.jpg', 0)
 # run(img)

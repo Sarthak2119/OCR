@@ -60,6 +60,23 @@ def cut_image(img): #expects a binarized image
     # print(vsum)
 
     # print(minx, maxx, miny, maxy)
+    if(minx-2 >=0):
+        minx = minx-2
+    elif (minx - 1 >= 0):
+        minx = minx - 1
+    if(maxx+2 < img.shape[0]):
+        maxx = maxx+2
+    elif (maxx + 1 < img.shape[0]):
+        maxx = maxx + 1
+    if (miny - 2 >= 0):
+        miny = miny - 2
+    elif (miny - 1 >= 0):
+        miny = miny - 1
+    if (maxy + 2 < img.shape[1]):
+        maxy = maxy + 2
+    elif (maxy + 1 < img.shape[1]):
+        maxy = maxy + 1
+
     img = img[minx:maxx+1, miny:maxy+1]
     img = abs(255 - img)
     return img

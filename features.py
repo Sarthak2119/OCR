@@ -2,46 +2,22 @@ import preprocess as pre
 import utility as util
 import numpy as np
 import cv2
-
-#older one for older dataset
-# def pre_init(img):
-#     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-#     img = pre.otsu_thresh(img)
-#
-#     r, c = img.shape
-#     cnt0, cnt1 = 0,0
-#     for i in range(0,c):
-#         if img[0,i] == 0:
-#             cnt1 = cnt1+1
-#         else:
-#             cnt0 = cnt0+1
-#         if img[r-1,i] == 0:
-#             cnt1 = cnt1+1
-#         else:
-#             cnt0 = cnt0+1
-#
-#     for i in range(0,r):
-#         if img[i, 0] == 0:
-#             cnt1 = cnt1+1
-#         else:
-#             cnt0 = cnt0+1
-#         if img[i, c-1] == 0:
-#             cnt1 = cnt1+1
-#         else:
-#             cnt0 = cnt0+1
-#
-#     sum = cnt0+cnt1
-#     cnt1 = cnt1/sum
-#     #print(cnt1)
-#     if(cnt1 > 0.5):
-#         img = abs(255-img)
-#
-#     return img
+from scipy import signal
+# from matplotlib import pyplot as plt
 
 def pre_init(img):
     img = pre.cut_image(img)
-    img = pre.thin_image(img)
-    return img
+    aspect = img.shape[0]/img.shape[1]
+    img = cv2.resize(img, (50, 50), interpolation=cv2.INTER_CUBIC)
+    new_img = pre.thin_image(img)
+
+    #changes for end-points counting
+    # img = util.cnvt_bool_to_uint8(img)
+    # kernel = np.ones((3,3),np.uint8)
+    # dilation = cv2.dilate(img, kernel, iterations=1)
+    # dilation[dilation==255]=1
+
+    return aspect, img, new_img
 
 #feature 1
 def crossing(img):
@@ -105,7 +81,7 @@ def crossing(img):
 #feature 2
 def histo(img):
     # img = abs(255 - img)
-    img = cv2.resize(img, (10, 10), interpolation=cv2.INTER_CUBIC)
+    img = cv2.resize(img, (25, 25), interpolation=cv2.INTER_CUBIC)
     img[img == 255]=1
     # util.display_image(img)
     vec = []
@@ -140,16 +116,16 @@ def calculate_pixels(img,x_start,x_end,y_start,y_end,val):
                 cnt=cnt+1
     return cnt
 
-def zoing_new(img):
+def zoing_new(size, img):
     #create 5*5 zoning
     x,y=img.shape
     zone_features = []
-    for i in range(0,5):
-        for j in range(0,5):
-            x1=int(i*x/5)
-            y1 = int(j*y/5)
-            x2 = int(x1+x/5)
-            y2=int(y1+x/5)
+    for i in range(0,size):
+        for j in range(0,size):
+            x1=int(i*x/size)
+            y1 = int(j*y/size)
+            x2 = int(x1+x/size)
+            y2=int(y1+x/size)
             zone_features.append(calculate_pixels(img,x1,x2,y1,y2,0))
 
     return zone_features
@@ -188,26 +164,84 @@ def cnt_vlines(img):
     l.append(ans)
     return l
 
+def skeleton_endpoints(skel):
+    # make out input nice, possibly necessary
+    skel = skel.copy()
+    skel[skel!=0] = 1
+    skel = np.uint8(skel)
+
+    # apply the convolution
+    kernel = np.uint8([[1,  1, 1],
+                       [1, 10, 1],
+                       [1,  1, 1]])
+    src_depth = -1
+    filtered = cv2.filter2D(skel,src_depth,kernel)
+
+    # now look through to find the value of 11
+    # this returns a mask of the endpoints, but if you just want the coordinates, you could simply return np.where(filtered==11)
+    out = np.zeros_like(skel)
+    out[np.where(filtered == 11)] = 1
+
+    l = []
+    l.append(np.sum(out))
+    # print(np.sum(out))
+    return l,out
+    # out[np.where(filtered==11)] = 1
+    # return out
+
+def count_endplt_regions(img):
+    return zoing_new(3, img)
+
+# def gabor_wavelet_transform(img):
+#     imgg = np.array(img)
+#     widths = np.arange(1, 50)
+#     print(len(widths), len(img))
+#     matrix = signal.cwt(imgg, signal.ricker, widths)
+#     l = []
+#     for i in matrix:
+#         l.append(i)
+#     return l
+
+def Karhunen_Loeve_Transform(img):
+    img = cv2.resize(img, (10, 10), interpolation=cv2.INTER_CUBIC)
+    val,vec = np.linalg.eig(np.cov(img))
+    klt = np.dot(vec,img)
+    klt = klt.flatten()
+    l = []
+    for i in klt:
+        l.append(i)
+    return l
+
 def get_data(img):
 
-    img = pre_init(img)
+    aspect, old_img, img = pre_init(img)
     img = util.cnvt_bool_to_uint8(img)
-    img = cv2.resize(img, (50, 50), interpolation=cv2.INTER_CUBIC)
     features = []
+    features.append(aspect)
     curr = histo(img)
+    features += curr
+
+    curr = Karhunen_Loeve_Transform(old_img)
     features += curr
 
     img[img == 255] = 1
 
+    # plt.imshow(img, plt.cm.gray)
+    # plt.show()
+
     curr = crossing(img)
     features += curr
-    curr = zoing_new(img)
+    curr = zoing_new(5, old_img)
     features += curr
     curr = momentum(img)
     features += curr
     curr = cnt_hlines(img)
     features += curr
     curr = cnt_vlines(img)
+    features += curr
+    curr, out = skeleton_endpoints(img)
+    features += curr
+    curr = count_endplt_regions(out)
     features += curr
 
     return features

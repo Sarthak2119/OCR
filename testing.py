@@ -7,15 +7,9 @@ import utility as util
 from matplotlib import pyplot as plt
 from skimage import measure
 import numpy as np
+import features
+from scipy import signal
 
-img = cv2.imread('/home/sarthak/PycharmProjects/OCR/Fnt/Sample009/img009-00033.png', 0)
-cutt = pre.cut_image(img)
+img = cv2.imread('/home/sarthak/PycharmProjects/OCR/Fnt/Sample004/img004-00001.png', 0)
 
-util.display_image(img)
-util.display_image(cutt)
-
-img = pre.thin_image(img)
-cutt = pre.thin_image(cutt)
-
-print(img.shape, end='')
-print(cutt.shape)
+data = features.get_data(img)

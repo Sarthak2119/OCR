@@ -11,15 +11,16 @@ def run():
     x = 0
     y = 0
     cwd = os.getcwd()
-    train_in = 'train_input3.txt'
-    test_in = 'test_input3.txt'
-    train_out = 'train_out3.txt'
-    test_out = 'test_out3.txt'
+    train_in = 'train_input1.txt'
+    test_in = 'test_input1.txt'
+    train_out = 'train_out1.txt'
+    test_out = 'test_out1.txt'
     train_in = open(train_in, 'w')
     train_out = open(train_out, 'w')
     test_in = open(test_in, 'w')
     test_out = open(test_out, 'w')
-    path = cwd+'/Fnt3/'
+
+    path = cwd+'/Fnt1/'
     for files in os.listdir(path):
         character_value = int((files[6:len(files)]))
         # print (files)
