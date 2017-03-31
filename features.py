@@ -202,6 +202,7 @@ def count_endplt_regions(img):
 #         l.append(i)
 #     return l
 
+#for better results hopefully
 def Karhunen_Loeve_Transform(img):
     img = cv2.resize(img, (10, 10), interpolation=cv2.INTER_CUBIC)
     val,vec = np.linalg.eig(np.cov(img))
