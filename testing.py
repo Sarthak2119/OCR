@@ -12,4 +12,4 @@ from scipy import signal
 
 img = cv2.imread('/home/sarthak/PycharmProjects/OCR/Fnt/Sample004/img004-00001.png', 0)
 
-data = features.get_data(img)
+aspect, old, new = features.pre_init(img)

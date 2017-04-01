@@ -13,7 +13,7 @@ def read_data(data):
             if len(j)==0:
                 continue
             # print (j)
-            new_list.append(int(j))
+            new_list.append(j)
         ans.append(new_list)
         # print(ans[0])
     ret = np.empty([len(ans)-1, len(ans[0])])
@@ -50,7 +50,8 @@ def run():
         pickle.dump(scaler,f)
 
     #training
-    clf = MLPClassifier(hidden_layer_sizes=(50, 50))
+    print(x_train[0])
+    clf = MLPClassifier(hidden_layer_sizes=(80,80))
     clf.fit(x_train, y_train)
     with open('MPLClassifier.pkl','wb') as f:
         pickle.dump(clf,f)

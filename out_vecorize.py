@@ -8,7 +8,7 @@ def convert_ys(str1, str2):
     for i in f1:
         x=0
         output_vec=[]
-        print(i)
+        # print(i)
         if i>='A' and i<='Z':
             z=ord(i)-65
             x=10+z+1

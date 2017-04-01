@@ -192,26 +192,20 @@ def skeleton_endpoints(skel):
 def count_endplt_regions(img):
     return zoing_new(3, img)
 
-# def gabor_wavelet_transform(img):
-#     imgg = np.array(img)
-#     widths = np.arange(1, 50)
-#     print(len(widths), len(img))
-#     matrix = signal.cwt(imgg, signal.ricker, widths)
-#     l = []
-#     for i in matrix:
-#         l.append(i)
-#     return l
 
-#for better results hopefully
-def Karhunen_Loeve_Transform(img):
+#discreet cosine transform of the image
+def get_dct(img):
     img = cv2.resize(img, (10, 10), interpolation=cv2.INTER_CUBIC)
-    val,vec = np.linalg.eig(np.cov(img))
-    klt = np.dot(vec,img)
-    klt = klt.flatten()
+    imf = np.float32(img)/255.0
+    the_dct = cv2.dct(imf)
     l = []
-    for i in klt:
-        l.append(i)
+    print(len(l))
+    print(len(l[0]))
+    for i in the_dct:
+        for j in i:
+            l.append(j)
     return l
+
 
 def get_data(img):
 
@@ -222,8 +216,8 @@ def get_data(img):
     curr = histo(img)
     features += curr
 
-    curr = Karhunen_Loeve_Transform(old_img)
-    features += curr
+    # curr = Karhunen_Loeve_Transform(old_img)
+    # features += curr
 
     img[img == 255] = 1
 
