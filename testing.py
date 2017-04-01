@@ -13,3 +13,5 @@ from scipy import signal
 img = cv2.imread('/home/sarthak/PycharmProjects/OCR/Fnt/Sample004/img004-00001.png', 0)
 
 aspect, old, new = features.pre_init(img)
+l = features.get_dct(old)
+print(l)

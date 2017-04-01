@@ -199,8 +199,8 @@ def get_dct(img):
     imf = np.float32(img)/255.0
     the_dct = cv2.dct(imf)
     l = []
-    print(len(l))
-    print(len(l[0]))
+    # print(len(the_dct))
+    # print(len(the_dct[0]))
     for i in the_dct:
         for j in i:
             l.append(j)
@@ -237,6 +237,8 @@ def get_data(img):
     curr, out = skeleton_endpoints(img)
     features += curr
     curr = count_endplt_regions(out)
+    features += curr
+    curr = get_dct(old_img)
     features += curr
 
     return features
