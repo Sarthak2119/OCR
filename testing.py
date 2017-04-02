@@ -10,8 +10,12 @@ import numpy as np
 import features
 from scipy import signal
 
-img = cv2.imread('/home/sarthak/PycharmProjects/OCR/Fnt/Sample004/img004-00001.png', 0)
+img = cv2.imread('/home/sarthak/PycharmProjects/OCR/Fnt/Sample023/img023-00046.png', 0)
 
-aspect, old, new = features.pre_init(img)
-l = features.get_dct(old)
+a, b, c = features.pre_init(img)
+
+# plt.imshow(c, plt.cm.gray)
+# plt.show()
+
+l,inte = features.count_intersect(c)
 print(l)

@@ -46,14 +46,14 @@ def run():
     x_train = scaler.transform(x_train)
 
     x_test = scaler.transform(x_test)
-    with open('scaler.pkl','wb') as f:
+    with open('scaler3.pkl','wb') as f:
         pickle.dump(scaler,f)
 
     #training
     print(x_train[0])
     clf = MLPClassifier(hidden_layer_sizes=(80,80))
     clf.fit(x_train, y_train)
-    with open('MPLClassifier.pkl','wb') as f:
+    with open('MPLClassifier3.pkl','wb') as f:
         pickle.dump(clf,f)
 
     #testing

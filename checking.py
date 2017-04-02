@@ -10,12 +10,12 @@ import numpy as np
 import pickle
 import utility as util
 
-img = cv2.imread('/home/sarthak/ip/sunil.jpeg', 0)
+img = cv2.imread('/home/sarthak/PycharmProjects/OCR/text1.png', 0)
 # img = cv2.resize(img, (50, 50), interpolation=cv2.INTER_CUBIC)
 
-with open('MPLClassifier.pkl', 'rb') as f:
+with open('MPLClassifier3.pkl', 'rb') as f:
     clf = pickle.load(f)
-with open('scaler.pkl', 'rb') as f:
+with open('scaler3.pkl', 'rb') as f:
     scaler = pickle.load(f)
 list_chars = template.run(img)
 

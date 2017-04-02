@@ -2,6 +2,7 @@ import preprocess as pre
 import utility as util
 import numpy as np
 import cv2
+from skimage.util import invert
 from scipy import signal
 # from matplotlib import pyplot as plt
 
@@ -9,6 +10,7 @@ def pre_init(img):
     img = pre.cut_image(img)
     aspect = img.shape[0]/img.shape[1]
     img = cv2.resize(img, (50, 50), interpolation=cv2.INTER_CUBIC)
+    img = pre.otsu_thresh(img)
     new_img = pre.thin_image(img)
 
     #changes for end-points counting
@@ -82,6 +84,7 @@ def crossing(img):
 def histo(img):
     # img = abs(255 - img)
     img = cv2.resize(img, (25, 25), interpolation=cv2.INTER_CUBIC)
+    img = pre.otsu_thresh(img)
     img[img == 255]=1
     # util.display_image(img)
     vec = []
@@ -135,22 +138,27 @@ def cnt_hlines(img):
     r,c = img.shape
     l = []
     ans = 0
+    ans1 = 0
     for i in range(0,r):
         cnt=0
         for j in range(0,c):
             if img[i,j] == 1 :
                 cnt += 1
             else:
-                if cnt >= 10:
+                if cnt >= 25:
                     ans += 1
+                elif cnt>= 15:
+                    ans1 += 1
                 cnt = 0
     l.append(ans)
+    l.append(ans1)
     return l
 
 #feature 6
 def cnt_vlines(img):
     r, c = img.shape
     ans = 0
+    ans1 = 0
     l = []
     for j in range(0, c):
         cnt = 0
@@ -158,10 +166,13 @@ def cnt_vlines(img):
             if img[i, j] == 1:
                 cnt += 1
             else:
-                if cnt >= 10:
+                if cnt >= 25:
                     ans += 1
+                elif cnt >= 15:
+                    ans1 += 1
                 cnt = 0
     l.append(ans)
+    l.append(ans1)
     return l
 
 def skeleton_endpoints(skel):
@@ -192,23 +203,77 @@ def skeleton_endpoints(skel):
 def count_endplt_regions(img):
     return zoing_new(3, img)
 
+#counting loops in character
 
-#discreet cosine transform of the image
-def get_dct(img):
-    img = cv2.resize(img, (10, 10), interpolation=cv2.INTER_CUBIC)
-    imf = np.float32(img)/255.0
-    the_dct = cv2.dct(imf)
+def find(i):
+    if parent[i] != i:
+        parent[i] = find(parent[i])
+    return parent[i]
+
+def union(i, j):
+    parent[i] = j
+
+def bounds(i,j, h,w):
+    if(i>=0 and i<h and j>=0 and j<w):
+        return 1
+    return  0
+
+def count_loops(img):
+    global parent
+    parent = []
+    for i in range(0,50*50):
+        parent.append(i)
+    img = cv2.resize(img, (50, 50), interpolation=cv2.INTER_CUBIC)
+    img = pre.otsu_thresh(img)
+    dir = [[1,1], [1,0], [1,-1], [0,1], [0,-1], [-1, 1], [-1, 0], [-1, -1]]
+    r,c = img.shape
+    for i in range(0,r):
+        for j in range(0,c):
+            if img[i,j] == 0:
+                continue
+            for k in range(0,8):
+                x = i+dir[k][0]
+                y = j+dir[k][1]
+                if bounds(x,y,r,c) and img[x,y] != 0:
+                    parenta = find(i*r+j)
+                    parentb = find(x*r+y)
+                    if parenta != parentb:
+                        union(parenta, parentb)
+    cnt=0
+    for i in range(0,r*c):
+        if find(i) == i and img[int(i/r), i%r] != 0:
+            cnt += 1
     l = []
-    # print(len(the_dct))
-    # print(len(the_dct[0]))
-    for i in the_dct:
-        for j in i:
-            l.append(j)
+    l.append(cnt)
     return l
+##########################
 
+#counting no of intersection points
+
+def bounds2(i,j):
+    if(i>=0 and i<3 and j>=0 and j<3):
+        return 1
+    return  0
+
+def count_intersect(img):
+    r, c = img.shape
+    intersect = np.zeros((r,c), dtype=np.bool)
+    for i in range(2,r-2):
+        for j in range(2,c-2):
+            x = i-2
+            y = j-2
+            neighbours = img[x:x+5, y:y+5]
+            if np.sum(neighbours) > 6:
+                intersect[i][j] = 1
+    l = []
+    l.append(np.sum(intersect))
+    return l, intersect
+
+###################################
 
 def get_data(img):
 
+    init_img = img.copy()
     aspect, old_img, img = pre_init(img)
     img = util.cnvt_bool_to_uint8(img)
     features = []
@@ -216,17 +281,11 @@ def get_data(img):
     curr = histo(img)
     features += curr
 
-    # curr = Karhunen_Loeve_Transform(old_img)
-    # features += curr
-
     img[img == 255] = 1
-
-    # plt.imshow(img, plt.cm.gray)
-    # plt.show()
 
     curr = crossing(img)
     features += curr
-    curr = zoing_new(5, old_img)
+    curr = zoing_new(4, old_img)
     features += curr
     curr = momentum(img)
     features += curr
@@ -238,7 +297,12 @@ def get_data(img):
     features += curr
     curr = count_endplt_regions(out)
     features += curr
-    curr = get_dct(old_img)
+    curr = count_loops(init_img)
+    features += curr
+
+    curr, intersect = count_intersect(img)
+    features += curr
+    curr = count_endplt_regions(intersect)
     features += curr
 
     return features

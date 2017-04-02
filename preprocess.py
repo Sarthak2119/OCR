@@ -1,5 +1,5 @@
 import cv2
-from skimage.morphology import thin
+from skimage.morphology import thin, skeletonize
 from skimage.util import invert
 import numpy as np
 from matplotlib import pyplot as plt
