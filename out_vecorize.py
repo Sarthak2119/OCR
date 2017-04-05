@@ -11,11 +11,11 @@ def convert_ys(str1, str2):
         # print(i)
         if i>='A' and i<='Z':
             z=ord(i)-65
-            x=10+z+1
+            x=11+z
         elif i>='a' and i<='z':
             z=ord(i)
-            z-=98
-            x=37+z+1
+            z-=97
+            x=37+z
         elif i>='0' and i<='9':
             z=int(i)
             x=z+1

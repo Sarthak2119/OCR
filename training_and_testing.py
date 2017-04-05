@@ -1,6 +1,9 @@
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import ExtraTreesClassifier, RandomForestClassifier
 from sklearn.metrics import classification_report,confusion_matrix
+from sklearn.linear_model import LogisticRegression
 import numpy as np
 import pickle
 
@@ -46,14 +49,16 @@ def run():
     x_train = scaler.transform(x_train)
 
     x_test = scaler.transform(x_test)
-    with open('scaler3.pkl','wb') as f:
+    with open('scaler4.pkl','wb') as f:
         pickle.dump(scaler,f)
 
     #training
-    print(x_train[0])
-    clf = MLPClassifier(hidden_layer_sizes=(80,80))
+    print(len(x_train[0]))
+    # clf = MLPClassifier(hidden_layer_sizes=(80,80))
+    # clf = ExtraTreesClassifier()
+    # clf = KNeighborsClassifier(n_neighbors=4)
     clf.fit(x_train, y_train)
-    with open('MPLClassifier3.pkl','wb') as f:
+    with open('LogisticClassifier.pkl','wb') as f:
         pickle.dump(clf,f)
 
     #testing

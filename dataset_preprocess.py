@@ -29,7 +29,7 @@ def run():
         real_value = 0
         # print(files)
         if character_value > 0 and character_value < 11:
-            real_value = str(character_value)
+            real_value = str(character_value-1)
         elif character_value > 10 and character_value < 37:
             character_value = character_value - 10
             real_value = chr(65 + character_value - 1)
@@ -80,4 +80,3 @@ def run():
     train_in.close()
     test_out.close()
     test_in.close()
-
